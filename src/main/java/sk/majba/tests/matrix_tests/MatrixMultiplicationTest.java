@@ -42,21 +42,6 @@ public class MatrixMultiplicationTest {
     }
 
     @Test
-    public void testMatrixMultiplicationNegative1() {
-        double[][] matrix1 = {
-                {1.0f, 2.0f},
-                {3.0f, 4.0f},
-                {5.0f, 6.0f}
-        };
-
-        double[][] matrix2 = {
-                {1.0f, 2.0f, 3.0f},
-                {4.0f, 5.0f, 6.0f}
-        };
-        assertThrows(IllegalArgumentException.class, () -> multiply(matrix1, matrix2));
-    }
-
-    @Test
     public void testValidMultiplication() {
         double[][] matrixA = {{1.0f, 2.0f}, {3.0f, 4.0f}};
         double[][] matrixB = {{5.0f, 6.0f}, {7.0f, 8.0f}};

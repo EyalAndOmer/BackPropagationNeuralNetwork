@@ -13,6 +13,6 @@ public class Sigmoid extends ActivationFunction {
 
     @Override
     public String getName() {
-        return "Sigmoid";
+        return "sigmoid";
     }
 }

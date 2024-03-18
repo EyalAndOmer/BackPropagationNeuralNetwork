@@ -13,6 +13,6 @@ public class ReLU extends ActivationFunction {
 
     @Override
     public String getName() {
-        return "ReLU";
+        return "relu";
     }
 }

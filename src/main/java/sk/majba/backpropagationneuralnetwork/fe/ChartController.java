@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -61,7 +60,6 @@ public class ChartController {
     private File lastVisitedDirectory;
 
     public void initialize() {
-
         txtFieldNumberOfEpochs.setText("1000");
         choiceErrorFunction.setValue("MSE");
         txtFieldLearningRate.setText("0.001");
@@ -88,7 +86,8 @@ public class ChartController {
         this.network = new Network(new MSE(), dataSet1, dataSet2);
         this.network.addLayer(new Layer(1, LayerType.INPUT, new Linear(), "input"));
         this.network.addLayer(new Layer(32, LayerType.HIDDEN, new ReLU(), "hidden 3"));
-        this.network.addLayer(new Layer(10, LayerType.HIDDEN, new Sigmoid(), "hidden 3"));
+        this.network.addLayer(new Layer(16, LayerType.HIDDEN, new ReLU(), "hidden 3"));
+        this.network.addLayer(new Layer(8, LayerType.HIDDEN, new Sigmoid(), "hidden 3"));
         this.network.addLayer(new Layer(1, LayerType.OUTPUT, new Linear(), "output"));
         this.network.initNetwork();
 
@@ -103,6 +102,7 @@ public class ChartController {
 
         // File chooser
         this.datasetFileChooser = new FileChooser();
+        this.datasetFileChooser.setInitialDirectory(new File("C:\\personal\\ING\\1. Semester\\projekt 1\\BackPropagationNeuralNetwork\\datasets"));
     }
 
     public void handleButtonAction(ActionEvent event) {

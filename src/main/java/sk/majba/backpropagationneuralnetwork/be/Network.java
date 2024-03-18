@@ -15,6 +15,7 @@ public class Network {
     private DoubleDataSet testSeries;
     public static final Random random = new Random(1);
     private ErrorMetric errorMetric;
+    private List<Layer> bestWeights;
 
     public Network(ErrorMetric errorMetric,DoubleDataSet trainSeries,DoubleDataSet testSeries) {
         this.errorMetric = errorMetric;
@@ -53,7 +54,7 @@ public class Network {
         }
     }
 
-        public double[][] backwardPass(double[][] targetOutput, double learningRate) {
+    public double[][] backwardPass(double[][] targetOutput, double learningRate) {
         Layer outputLayer = this.layers.getLast();
         double[][] output = outputLayer.getOutput();
         double[][] predictionError = new double[output.length][output[0].length];
@@ -63,7 +64,6 @@ public class Network {
             for (int j = 0; j < output[0].length; j++) {
                 outputLayerOutputDerivation[i][j] = outputLayer.getActivationFunction().derivative(output[i][j]);
                 predictionError[i] = this.errorMetric.calculateErrorDerivative(targetOutput[i], output[i]);
-//                predictionError[i][j] = -2 * (targetOutput[i][j] - output[i][j]);
             }
         }
 
@@ -118,10 +118,10 @@ public class Network {
         double[][] dataset = DatasetUtils.readCSV(datasetFilePath, ",");
 
         this.layers.getFirst().setNeuronCount(dataset[0].length - 1);
-        this.initNetwork();
+//        this.initNetwork();
 
         // 2. Split dataset
-        Map<String, double[][]> trainTestMap = DatasetUtils.splitData(dataset, trainTestSplitRatio, true,
+        Map<String, double[][]> trainTestMap = DatasetUtils.splitData(dataset, trainTestSplitRatio, false,
                 dataset[0].length - 1, random);
 
         double[][] trainInput = trainTestMap.get("trainInput");
@@ -132,6 +132,8 @@ public class Network {
 
         double[] trainPrediction = new double[trainInput.length];
         double[] testPrediction = new double[testInput.length];
+
+        double minError = Double.MAX_VALUE;
 
         for (int i = 0; i < numberOfEpochs; i++) {
             // 4. Train network
@@ -144,26 +146,30 @@ public class Network {
 
                 this.backwardPass(new double[][]{trainOutput[j]}, learningRate);
             }
-            // 5. Test network
 
-            // TODO dorobit zobranie najlepsich vah
+            // 5. Test network
             for (int j = 0; j < testInput.length; j++) {
                 this.forwardPass(new double[][]{testInput[j]});
                 testPrediction[j] = this.layers.getLast().getOutput()[0][0];
 
-                if (i == numberOfEpochs - 1) {
-                    System.out.printf("Real: %f, prediction: %f%n", testOutput[j][0], testPrediction[j]);
-                }
+//                if (i == numberOfEpochs - 1) {
+//                    System.out.printf("Real: %f, prediction: %f%n", testOutput[j][0], testPrediction[j]);
+//                }
             }
 
             // 6. Process results
             double trainError = this.errorMetric.calculateError(MatrixUtils.transpose(trainOutput)[0], trainPrediction);
             double testError = this.errorMetric.calculateError(MatrixUtils.transpose(testOutput)[0], testPrediction);
 
-            System.out.println("Epoch " + (i + 1) + "/" + numberOfEpochs + " done. Loss: " + trainError + " " + testError);
-//
-            final int finalI = i + 1;
+            System.out.println("Loss after epoch " + (i + 1) + ": " + trainError);
+
+            // Save best weights
+            if (trainError < minError) {
+                this.bestWeights = this.layers;
+            }
+
             // Output data to chart
+            final int finalI = i + 1;
             Platform.runLater(() -> {
                 this.trainSeries.add(finalI, trainError);
                 this.testSeries.add(finalI, testError);
@@ -175,24 +181,12 @@ public class Network {
         return layers;
     }
 
-    public DoubleDataSet getTrainSeries() {
-        return trainSeries;
-    }
-
     public void setTrainSeries(DoubleDataSet trainSeries) {
         this.trainSeries = trainSeries;
     }
 
-    public DoubleDataSet getTestSeries() {
-        return testSeries;
-    }
-
     public void setTestSeries(DoubleDataSet testSeries) {
         this.testSeries = testSeries;
-    }
-
-    public ErrorMetric getErrorMetric() {
-        return errorMetric;
     }
 
     public void setErrorMetric(ErrorMetric errorMetric) {

@@ -11,6 +11,7 @@ import sk.majba.backpropagationneuralnetwork.be.activation_function.Sigmoid;
 import sk.majba.backpropagationneuralnetwork.be.error_metrics.MAPE;
 import sk.majba.backpropagationneuralnetwork.be.error_metrics.MSE;
 import sk.majba.backpropagationneuralnetwork.be.utils.DatasetUtils;
+import sk.majba.backpropagationneuralnetwork.be.utils.FileUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -153,10 +154,10 @@ public class NetworkTest {
             Assert.assertArrayEquals(hiddenLayer1UpdatedWeights[i], network.getLayers().get(network.getLayers().size() - 3).getWeights()[i], DELTA);
         }
 
-        List<HashMap<String, Object>> jsonData = DatasetUtils.readJsonFile("C:\\personal\\ING\\1. Semester\\projekt 1\\BackPropagationNeuralNetwork\\datasets\\python_outputs.txt");
-
-        Arrays.deepEquals(((double[][][]) jsonData.get(0).get("Weights"))[0], network.getLayers().get(1).getWeights());
-        System.out.println();
+//        List<HashMap<String, Object>> jsonData = DatasetUtils.readJsonFile("C:\\personal\\ING\\1. Semester\\projekt 1\\BackPropagationNeuralNetwork\\datasets\\python_outputs.txt");
+//
+//        Arrays.deepEquals(((double[][][]) jsonData.get(0).get("Weights"))[0], network.getLayers().get(1).getWeights());
+//        System.out.println();
     }
 
     @Test
@@ -171,13 +172,16 @@ public class NetworkTest {
 
         // Initialize your layers here
         network.addLayer(new Layer(1, LayerType.INPUT, new Linear(), "input"));
-        network.addLayer(new Layer(64, LayerType.HIDDEN, new ReLU(), "hidden 1"));
-        network.addLayer(new Layer(32, LayerType.HIDDEN, new ReLU(), "hidden 2"));
-        network.addLayer(new Layer(8, LayerType.HIDDEN, new Sigmoid(), "hidden 2"));
+        network.addLayer(new Layer(64, LayerType.HIDDEN, new ReLU(), "hidden1"));
+        network.addLayer(new Layer(32, LayerType.HIDDEN, new ReLU(), "hidden2"));
+        network.addLayer(new Layer(8, LayerType.HIDDEN, new Sigmoid(), "hidden3"));
         network.addLayer(new Layer(1, LayerType.OUTPUT, new Linear(), "output"));
         network.initNetwork();
 
-        network.train("C:\\personal\\ING\\1. Semester\\projekt 1\\BackPropagationNeuralNetwork\\datasets\\sine_values.csv", 0.8, 300, 0.001);
+        FileUtils.saveWeightsToFile(network.getLayers(), "sine_layers.txt");
+
+        network.train("C:\\personal\\ING\\1. Semester\\projekt 1\\BackPropagationNeuralNetwork\\datasets\\sine_values.csv",
+                0.8, 20, 0.0001);
 //        System.out.println(network.getLayers().getLast().getOutput()[0][0]);
     }
 }

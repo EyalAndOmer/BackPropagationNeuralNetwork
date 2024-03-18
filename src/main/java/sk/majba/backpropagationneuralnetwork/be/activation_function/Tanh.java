@@ -14,6 +14,6 @@ public class Tanh extends ActivationFunction{
 
     @Override
     public String getName() {
-        return "Tanh";
+        return "tanh";
     }
 }

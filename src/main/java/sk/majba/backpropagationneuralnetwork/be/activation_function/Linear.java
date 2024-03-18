@@ -13,6 +13,6 @@ public class Linear extends ActivationFunction {
 
     @Override
     public String getName() {
-        return "Linear";
+        return "linear";
     }
 }
